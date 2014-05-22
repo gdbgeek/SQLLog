@@ -33,11 +33,11 @@ namespace SQLLog
             string Tdbpassword = "";
             string Tdbname = "";
             string Tdbserver = "";
-            string Tdbschema = "";
+            string Tdbschema = "dbo";
 
             string Tfilter = "";
 
-            string Tsrid = "";
+            string Tsrid = "null";
 
             int c = args.GetUpperBound(0);
 
@@ -416,7 +416,7 @@ namespace SQLLog
                 sql = sql + ",[time]";
                 sql = sql + ",[source]";
                 sql = sql + ",[machine]";
-                sql = sql + ",[user]";
+                sql = sql + ",[username]";
                 sql = sql + ",[code]";
                 sql = sql + ",[elapsed]";
                 sql = sql + ",[process]";
