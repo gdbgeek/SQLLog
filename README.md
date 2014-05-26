@@ -15,17 +15,29 @@ The logs are normally cleared out after each call but this can be disabled while
 
 The tool takes several input which are listed below;
 
--logsurl = URL to the REST logs API eg http://localhost:6080/arcgis/admin/logs 
+-logsurl = URL to the REST logs API eg http://localhost:6080/arcgis/admin/logs
+
 -filter = Query filter eg "{'server' : '*','services' : '*','machines' : '*'}" (must be quote encased, if you require inner quotes use single quotes) 
+
 -user = User name of a user that can query the logs eg agsadmin 
+
 -password = Password of user that can query the logs eg spat1al 
+
 -tokenurl = URL of REST toen service eg http://localhost:6080/arcgis/tokens 
+
 -cleanlogs = Set to "Y" to clear out logs eg Y 
+
 -debug = Set debug mode on or off eg N 
+
 -dbpassword = Database password eg adm1n (if using Windows Authentication leave this parameter off)
+
 -dbuser = Database user name eg sdeadmin (if using Windows Authentication leave this parameter off)
+
 -dbname = Database name eg Performance 
+
 -dbserver = Database server name eg mercator
+
 -dbschema = Database schema (schema/owner for the SQL table, usually the same as your login or it may be "dbo" if using Windows Authentication)
+
 -srid = Spatial Reference ID for features eg 2193
  
