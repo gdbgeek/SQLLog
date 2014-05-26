@@ -28,3 +28,4 @@ The tool takes several input which are listed below;
 -dbserver = Database server name eg mercator
 -dbschema = Database schema (schema/owner for the SQL table, usually the same as your login or it may be "dbo" if using Windows Authentication)
 -srid = Spatial Reference ID for features eg 2193
+ 
