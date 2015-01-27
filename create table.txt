@@ -1,11 +1,11 @@
 CREATE TABLE [RawLogs](
-	[unique_id] bigint IDENTITY(1,1),
+	[unique_id] int IDENTITY(1,1),
 	[type] [nvarchar](50) NULL,
 	[message] [nvarchar](4000) NULL,
 	[time] [datetime2](7) NULL,
 	[source] [nvarchar](100) NULL,
 	[machine] [nvarchar](50) NULL,
-	[user] [nvarchar](50) NULL,
+	[username] [nvarchar](50) NULL,
 	[code] [numeric](38, 8) NULL,
 	[elapsed] [nvarchar](50) NULL,
 	[process] [nvarchar](50) NULL,

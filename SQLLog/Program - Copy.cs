@@ -49,7 +49,6 @@ namespace SQLLog
             string Tdbname = "";
             string Tdbserver = "";
             string Tdbschema = "dbo";
-            string Tpagesize = "1000";
 
             string Tfilter = "";
 
@@ -114,9 +113,6 @@ namespace SQLLog
                     case "-incremental":
                         string inc = thisVal;
                         if (inc.ToUpper() == "Y") incremental = true;
-                        break;
-                    case "-pagesize":
-                        Tpagesize = thisVal;
                         break;
                     default:
                         break;
@@ -192,34 +188,31 @@ namespace SQLLog
             {
                 string imgurl = logsurl + "/query?";
 
-                if (debug == true) Console.WriteLine("Previous End Time = " + prevEndTime.ToString());
+                if (debug == true) Console.WriteLine("prevEndTime = " + prevEndTime.ToString());
 
-                //If there is no last run and this is the first request then use sinceLastStart 
-                if (slastrun == "" && prevEndTime == 0)
+                if (prevEndTime == 0)
                 {
-                    if (debug == true) Console.WriteLine("Using sinceLastStart=true (must be first run)");
-                    imgurl = imgurl + "&sinceLastStart=true";
+                    imgurl = imgurl + "startTime=";
                 }
                 else
                 {
-                    //If we have a previous end time we must be in a hasMore loop so set the startTime
-                    if (prevEndTime > 0)
-                    {
-                        if (debug == true) Console.WriteLine("prevEndTime > 0 (" + prevEndTime.ToString() + ")");
-                        //startTime = most recent time to query
-                        imgurl = imgurl + "&startTime=" + prevEndTime.ToString();
-                    }
+                    imgurl = imgurl + "startTime=" + prevEndTime.ToString(); 
+                }
 
-                    //If we have a last run then use that to limit the results
-                    if (slastrun != "")
+                if (incremental == false)
+                {
+                    imgurl = imgurl + "&endTime=";
+                }
+                else
+                {
+                    if (slastrun == "" && prevEndTime == 0)
                     {
-                        if (debug == true) Console.WriteLine("Using endTime=" + slastrun);
-                        imgurl = imgurl + "&endTime=" + slastrun;
+                        imgurl = imgurl + "&sinceLastStart=true";
                     }
                     else
                     {
-                        if (debug == true) Console.WriteLine("Using sinceLastStart=true (must be first run but prevEndTime > 0)");
-                        imgurl = imgurl + "&sinceLastStart=true";
+                        //imgurl = imgurl + "&endTime=" + slastrun;
+                        imgurl = imgurl + "&endTime=" + sthisrun;                        
                     }
                 }
 
@@ -227,7 +220,8 @@ namespace SQLLog
                 imgurl = imgurl + "&filterType=json";
                 imgurl = imgurl + "&filter=" + Tfilter; //"{\"server\": \"*\", \"services\": \"*\", \"machines\":\"*\" }";
 
-                imgurl = imgurl + "&pageSize=" + Tpagesize;
+                imgurl = imgurl + "&pageSize=1000";
+                //imgurl = imgurl + "&pageSize=20";
                 imgurl = imgurl + "&f=pjson";                
 
                 if (Token != "")
@@ -260,8 +254,6 @@ namespace SQLLog
                         System.Environment.Exit(1);
                     }
 
-                    Console.WriteLine("Inserted " + result.ToString() + " records");
-
                     Hashtable root;
                     root = (Hashtable)Procurios.Public.JSON.JsonDecode(response);
                     hasMore = (bool)root["hasMore"];
@@ -278,7 +270,7 @@ namespace SQLLog
 
             double seconds = sw.ElapsedMilliseconds;
 
-            if (debug == true) Console.WriteLine("Made " + requests.ToString() + " successful requests in " + (seconds/1000).ToString() + " seconds");
+            if (debug == true) Console.WriteLine("Made " + requests.ToString() + " successful requests in " + seconds.ToString() + " seconds");
 
             if (debug == true) Console.WriteLine("Cleaning out logs (" + cleanlogs.ToString() + ")");
 
@@ -522,7 +514,7 @@ namespace SQLLog
                     return -1;
                 }
 
-                if (debug == true) Console.WriteLine("Inserted record " + (n+1).ToString());
+                if (debug == true) Console.WriteLine("Inserted record " + n.ToString());
             }
 
             myConnection.Close();
