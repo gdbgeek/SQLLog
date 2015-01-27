@@ -2,7 +2,7 @@
 SQLLog
 =====================================================================
 
-Copyright (C) 2014 Trevor Hart
+Copyright (C) 2015 Trevor Hart
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,4 +58,6 @@ The tool takes several input which are listed below;
 -dbschema = Database schema (schema/owner for the SQL table, usually the same as your login or it may be "dbo" if using Windows Authentication)
 
 -srid = Spatial Reference ID for features eg 2193
+
+-incremental = Runs in incremental mode set to "Y" to use
  
