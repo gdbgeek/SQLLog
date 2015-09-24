@@ -7,6 +7,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Collections;
 using System.Data.SqlClient;
+using Procurios.Public;
 
 namespace SQLLog
 {
@@ -37,7 +38,7 @@ namespace SQLLog
             bool debug = false;
             bool proxy = false;
             bool cleanlogs = false;
-            bool incremental = false;
+            //bool incremental = false;
 
             string TLogsURL = "";
             string TTokenURL = "";
@@ -111,10 +112,10 @@ namespace SQLLog
                     case "-srid":
                         Tsrid = thisVal;
                         break;
-                    case "-incremental":
-                        string inc = thisVal;
-                        if (inc.ToUpper() == "Y") incremental = true;
-                        break;
+                    //case "-incremental":
+                    //    string inc = thisVal;
+                    //    if (inc.ToUpper() == "Y") incremental = true;
+                    //    break;
                     case "-pagesize":
                         Tpagesize = thisVal;
                         break;
@@ -128,11 +129,11 @@ namespace SQLLog
 
             if (TLogsURL == "") return;
 
-            string[] temp_ms = TLogsURL.Split('/');
-
             string Token = "";
 
             string logsurl = TLogsURL;
+
+            
 
             WebClient client = new WebClient();
 
@@ -144,7 +145,9 @@ namespace SQLLog
 
             if (TTokenURL != "" && TPassword != "" && TUser != "")
             {
-                Token = GetToken(TTokenURL, TUser, TPassword);
+                if (TTokenURL.EndsWith("/") == false) TTokenURL = TTokenURL + "/";
+
+                Token = GetToken2(TTokenURL, TUser, TPassword);
                 if (Token.Contains("Token Error:"))
                 {
                     Console.WriteLine(Token);
@@ -243,7 +246,6 @@ namespace SQLLog
 
                     imgurl = imgurl + "&token=" + Token;
                 }
-
 
                 string response = "";
 
@@ -568,6 +570,46 @@ namespace SQLLog
                 System.IO.StreamReader readStream = new System.IO.StreamReader(responseStream);
 
                 myToken = readStream.ReadToEnd();
+            }
+
+            catch (WebException we)
+            {
+                myToken = "Token Error: " + we.Message;
+            }
+
+            return myToken;
+        }
+
+        public static string GetToken2(string tokenurl, string username, string password)
+        {
+            string url = tokenurl;
+            string param = "request=getToken&f=json&username=" + username + "&password=" + password + "&expiration=60&client=requestip";
+
+            System.Net.WebRequest request = System.Net.WebRequest.Create(url);
+            request.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
+
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = param.Length;
+
+            StreamWriter requestWriter = new StreamWriter(request.GetRequestStream());
+            requestWriter.Write(param);
+            requestWriter.Close();
+
+            string myToken = "";
+            string myJSON = "";
+
+            try
+            {
+                System.Net.WebResponse response = request.GetResponse();
+                System.IO.Stream responseStream = response.GetResponseStream();
+                System.IO.StreamReader readStream = new System.IO.StreamReader(responseStream);
+
+                myJSON = readStream.ReadToEnd();
+
+                Hashtable LogRecord = (Hashtable)JSON.JsonDecode(myJSON);
+
+                myToken = (string)LogRecord["token"];
             }
 
             catch (WebException we)
